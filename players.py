@@ -36,6 +36,15 @@ id_stats_players_map = {player["id"] : player for player in retreived_fpl_data["
 with open('data/positions_map.pkl', 'wb') as f:
     pickle.dump(positions_map, f)
 
+with open('data/teams_map.pkl', 'wb') as f:
+    pickle.dump(teams_map, f)
+
+with open('data/name_id_players_map.pkl', 'wb') as f:
+    pickle.dump(name_id_players_map, f)
+
+with open('data/id_stats_player_map.pkl', 'wb') as f:
+    pickle.dump(id_stats_players_map, f)
+
 
 #print(positions_map)
 fpl_2024_data = pd.read_csv('data/players.csv')
