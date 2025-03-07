@@ -29,8 +29,11 @@ for key, value in retreived_fpl_data.items():
 # Creating hashmaps for different data types
 positions_map = {pos["id"] : pos["singular_name"] for pos in retreived_fpl_data["element_types"]}
 teams_map = {team["id"]: team["name"] for team in retreived_fpl_data["teams"]}
-name_id_players_map = {f'{player["first_name"]} {player["second_name"]}': player["id"] for player in retreived_fpl_data["elements"]}
+#lowered all the names
+name_id_players_map = {f'{player["first_name"]} {player["second_name"]}'.lower(): player["id"] for player in retreived_fpl_data["elements"]}
 id_stats_players_map = {player["id"] : player for player in retreived_fpl_data["elements"]}
+
+print(id_stats_players_map)
 
 # Storing hashmaps as pickle files
 with open('data/positions_map.pkl', 'wb') as f:
@@ -48,4 +51,5 @@ with open('data/id_stats_player_map.pkl', 'wb') as f:
 
 #print(positions_map)
 fpl_2024_data = pd.read_csv('data/players.csv')
-print(fpl_2024_data.head())
+#print(fpl_2024_data.head())
+ 
