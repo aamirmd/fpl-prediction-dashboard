@@ -32,3 +32,4 @@ The following features will be used in this order for the ML model:
 ### Pre-processing steps
 
 - 'was_home' needs to be converted from True/False to 1/0
+- All features need to be type 'np.float32'
