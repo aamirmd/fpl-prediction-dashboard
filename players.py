@@ -25,8 +25,8 @@ def fpl_api():
         return None
 
 retreived_fpl_data = fpl_api()   
-for key, value in retreived_fpl_data.items():
-    print(key)
+""" for key, value in retreived_fpl_data.items():
+    print(key) """
 
 # Creating hashmaps for different data types
 positions_map = {pos["id"] : pos["singular_name"] for pos in retreived_fpl_data["element_types"]}
@@ -34,7 +34,9 @@ teams_map = {team["id"]: team["name"] for team in retreived_fpl_data["teams"]}
 #lowered all the names
 name_id_players_map = {f'{player["first_name"]} {player["second_name"]}'.lower(): player["id"] for player in retreived_fpl_data["elements"]}
 id_stats_players_map = {player["id"] : player for player in retreived_fpl_data["elements"]}
-
+player_names = [f'{player["first_name"]} {player["second_name"]}' for player in retreived_fpl_data["elements"]]
+#print(f'players: {player_names}')
+#print(len(player_names))
 # Storing hashmaps as pickle files
 with open('data/positions_map.pkl', 'wb') as f:
     pickle.dump(positions_map, f)

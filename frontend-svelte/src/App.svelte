@@ -3,6 +3,17 @@
   import viteLogo from "/vite.svg";
   import Counter from "./lib/Counter.svelte";
   import Search from "./lib/Search.svelte";
+
+  import { onMount } from "svelte";
+  import TransferSearch from "./lib/TransferSearch.svelte";
+
+  let players = $state([]);
+
+  onMount(async () => {
+    const response = await fetch("http://127.0.0.1:5000/players");
+    const json = await response.json();
+    players = json.data;
+  });
 </script>
 
 <main>
@@ -15,13 +26,20 @@
     </a>
   </div>
   <h1>FPL Points Predictor</h1>
-
+  <!-- 
   <div class="card">
     <Counter />
-  </div>
+  </div> -->
 
-  <div>
-    <Search />
+  <div class="flex-container">
+    <div class="transfer">
+      <p>Transfer Recommender</p>
+      <TransferSearch {players} />
+    </div>
+    <div class="search">
+      <p>Player Search</p>
+      <Search {players} />
+    </div>
   </div>
 </main>
 
@@ -40,5 +58,15 @@
   }
   .read-the-docs {
     color: #888;
+  }
+  .flex-container {
+    flex-direction: row;
+    display: flex;
+  }
+  .transfer {
+    justify-items: center;
+  }
+  .search {
+    justify-items: center;
   }
 </style>
