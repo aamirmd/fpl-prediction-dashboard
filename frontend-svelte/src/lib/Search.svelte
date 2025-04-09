@@ -42,8 +42,6 @@
 
   function chosenPlayer(cPlayer) {
     searchTerm = cPlayer;
-    playerName = searchTerm;
-    playerData();
   }
 </script>
 
