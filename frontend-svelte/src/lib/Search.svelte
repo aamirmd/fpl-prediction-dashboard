@@ -7,7 +7,6 @@
   const search = (e) => {
     e.preventDefault();
     playerName = document.forms["searchbar"].elements[0].value;
-
     playerData();
   };
   async function playerData() {
@@ -42,6 +41,8 @@
 
   function chosenPlayer(cPlayer) {
     searchTerm = cPlayer;
+    playerName = searchTerm;
+    playerData();
   }
 </script>
 
