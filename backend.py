@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
 from markupsafe import escape
 from flask_cors import CORS
-from players import name_id_players_map, id_stats_players_map
+from players import name_id_players_map, id_stats_players_map, player_names
 from predict import SimpleModel
 import torch
 app = Flask(__name__)
 CORS(app)
 
 #launch flask server with : flask --app backend run
+#launch front end with : npm run dev
 
 stats = ['xP', 'assists','bonus', 'bps',
 'clean_sheets',
@@ -57,17 +58,26 @@ predictions_np = predictions.numpy()
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
+@app.route("/players", methods=["GET"])
+def getPlayers():
+    data = player_names
+    format = {"data": data}
+    json = jsonify(format)
+    return json
+
+
 @app.route("/search/<name>", methods=["GET"])
 def search(name):
     clean_name = escape(name)
     id = name_id_players_map[clean_name]
-    goals = id_stats_players_map[id]["goals_scored"]
-    print("predicting")
+    playerStats = id_stats_players_map[id]
+    clean_name = playerStats["first_name"] + " " + playerStats["second_name"] 
     points = predictPoints(id)
     
     data = {"search":clean_name,
             "id": id,
-            "goals":points
+            "points":points
             }
     format = {"data": data}
     json = jsonify(format)
