@@ -26,7 +26,7 @@
 
   let filteredPlayers = $derived(
     players.filter((player) =>
-      player
+      player["name"]
         .normalize("NFD")
         .replace(/\p{Diacritic}/gu, "")
         .toLowerCase()
@@ -56,8 +56,8 @@
   <div class="suggestionView">
     {#each filteredPlayers as player}
       <div>
-        <button onclick={() => chosenPlayer(player)} class="suggestion"
-          >{player}</button
+        <button onclick={() => chosenPlayer(player["name"])} class="suggestion"
+          >{player["name"]}</button
         >
       </div>
     {/each}

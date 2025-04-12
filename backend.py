@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 from markupsafe import escape
 from flask_cors import CORS
-from players import name_id_players_map, id_stats_players_map, player_names
+from players import name_id_players_map, id_stats_players_map, player_basics
 from predict import SimpleModel
 import torch
+import pulp as p
 app = Flask(__name__)
 CORS(app)
 
@@ -61,7 +62,7 @@ def hello_world():
 
 @app.route("/players", methods=["GET"])
 def getPlayers():
-    data = player_names
+    data = player_basics
     format = {"data": data}
     json = jsonify(format)
     return json
@@ -85,6 +86,25 @@ def search(name):
         return json
     else:
         return None
+    
+@app.route("/transfer", methods=["POST"])
+def transferRec():
+    data = request.get_json()
+    for player in data:
+        player["predictPoints"] = predictPoints(player["id"])
+    for player in data:
+        print(player)
+    recommendation = getRec(data)
+    format = {"data": recommendation}
+    json = jsonify(format)
+    return json
+
+def getRec(players):
+    recommendedTransfer = None
+
+    candidates = [player for player in player_basics if player not in players]
+    Lp_prob = p.LpProblem('Problem', p.LpMaximize) 
+    return recommendedTransfer
 
 def predictPoints(id):
     playerData = []
