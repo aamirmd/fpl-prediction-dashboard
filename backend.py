@@ -10,7 +10,7 @@ CORS(app)
 #launch flask server with : flask --app backend run
 #launch front end with : npm run dev
 
-stats = ['xP', 'assists','bonus', 'bps',
+old_stats = ['xP', 'assists','bonus', 'bps',
 'clean_sheets',
  'creativity',
  'goals_conceded',
@@ -33,6 +33,12 @@ stats = ['xP', 'assists','bonus', 'bps',
  'value',
 'was_home',
 'yellow_cards']
+
+stats = ['assists', 'bonus', 'bps', 'clean_sheets', 'creativity',
+       'goals_conceded', 'goals_scored', 'ict_index', 'influence', 'minutes',
+       'own_goals', 'penalties_missed', 'penalties_saved', 'red_cards',
+       'saves', 'threat', 'total_points', 'transfers_in', 'transfers_out',
+       'yellow_cards']
 
 missing = []
 keys = id_stats_players_map[2].keys()
