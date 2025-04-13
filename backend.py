@@ -57,9 +57,52 @@ def transferRec():
     return json
 
 def getRec(players, bank):
-    recommendedTransfer = None
-    print(players, bank)
-    return recommendedTransfer
+    recommendedTransfer = {}
+    
+    for playerOut in players:
+    # choose 3 , no repeats, so remove candidate from pool
+        candidates = [player for player in player_basics if player not in players and player['position'] == playerOut['position']]
+        playerOutTeam = playerOut['team']
+        availableBank = bank + float(playerOut['cost'])
+
+        # remove this player from team count
+        playerTeams = {}
+        for player in players:
+            team = player['team']
+            if team not in playerTeams:
+                playerTeams[team] = 1
+            else:
+                playerTeams[team] += 1
+                
+        playerTeams[playerOutTeam] -= 1
+        # get all possible candidates, make optimal selection later
+        for candidate in candidates:
+            candidateID = candidate['id']
+            # check team constraint
+            candTeam = candidate['team']
+            if candTeam in playerTeams and playerTeams[candTeam] == 3:
+                continue
+            # check balance constraint
+            if float(candidate['cost']) > availableBank:
+                continue
+            # we only want players that are doing better
+            if float(candidate['predictedPoints']) <= float(playerOut['predictedPoints']):
+                continue
+            # we reached a candidate
+            # add to rec list, check if player in already in there, calcualte delta pred points and choose the higher one
+            delta = float(candidate['predictedPoints']) - float(playerOut['predictedPoints'])
+            delta = delta/float(playerOut['predictedPoints'])
+            if candidateID not in recommendedTransfer:
+                recommendedTransfer[candidateID] = {"playerIn":candidate, "playerOut": playerOut, "delta":delta}
+            else:
+                # candidate already in list, check for higher delta
+                currDelta = float(recommendedTransfer[candidateID]["delta"])
+                if delta > currDelta:
+                    recommendedTransfer[candidateID] = {"playerIn":candidate,"playerOut": playerOut, "delta":delta}
+
+    # sort by delta
+    sortedRecs = dict(sorted(recommendedTransfer.items(), key=lambda x: x[1]['delta'], reverse=True)[:3])
+    return sortedRecs
 
 def predictPoints(id):
     from players import id_stats_players_map

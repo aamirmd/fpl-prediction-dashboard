@@ -19,29 +19,24 @@ for i in range(15):
  
 bank = 100
 
-currCost = 0
-for player in testTeam:
-    currCost += int(player["cost"])
-
 # for each player in selected team
 
 for playerOut in testTeam:
-    playerTeams = {}
-
-    for player in testTeam:
-        team = player['team']
-        if team not in playerTeams:
-            playerTeams[team] = 1
-        else:
-            playerTeams[team] += 1
+    
     # choose 3 , no repeats, so remove candidate from pool
     candidates = [player for player in player_basics if player not in testTeam and player['position'] == playerOut['position']]
     playerOutTeam = playerOut['team']
     availableBank = bank + float(playerOut['cost'])
 
     # remove this player from team count
+    playerTeams = {}
+    for player in testTeam:
+        team = player['team']
+        if team not in playerTeams:
+            playerTeams[team] = 1
+        else:
+            playerTeams[team] += 1
     playerTeams[playerOutTeam] -= 1
-
     # get all possible candidates, make optimal selection later
     for candidate in candidates:
         candidateID = candidate['id']
@@ -50,26 +45,27 @@ for playerOut in testTeam:
         if candTeam in playerTeams and playerTeams[candTeam] == 3:
             continue
         # check balance constraint
-        elif float(candidate['cost']) > availableBank:
+        if float(candidate['cost']) > availableBank:
             continue
         # we only want players that are doing better
-        elif float(candidate['predictedPoints']) <= float(playerOut['predictedPoints']):
+        if float(candidate['predictedPoints']) <= float(playerOut['predictedPoints']):
             continue
         # we reached a candidate
+        # add to rec list, check if player in already in there, calcualte delta pred points and choose the higher one
+        delta = float(candidate['predictedPoints']) - float(playerOut['predictedPoints'])
+        delta = delta/float(playerOut['predictedPoints'])
+        if candidateID not in recs:
+            recs[candidateID] = {"playerIn":candidate, "playerOut": playerOut, "delta":delta}
         else:
-            # add to rec list, check if player in already in there, calcualte delta pred points and choose the higher one
-            delta = float(candidate['predictedPoints']) - float(playerOut['predictedPoints'])
-            if candidateID not in recs:
-                recs[candidateID] = {"playerIn":candidate, "playerOut": playerOut, "delta":delta}
-            else:
-                # candidate already in list, check for higher delta
-                currDelta = float(recs[candidateID]["delta"])
-                if delta > currDelta:
-                    recs[candidateID] = {"playerIn":candidate,"playerOut": playerOut, "delta":delta}
+            # candidate already in list, check for higher delta
+            currDelta = float(recs[candidateID]["delta"])
+            if delta > currDelta:
+                recs[candidateID] = {"playerIn":candidate,"playerOut": playerOut, "delta":delta}
 
 # sort by delta
-sortedRecs = sorted(recs.items(), key=lambda x: x[1]['delta'], reverse=True)[:4]
+sortedRecs = dict(sorted(recs.items(), key=lambda x: x[1]['delta'], reverse=True)[:3])
 print(sortedRecs)
+ 
 
 
 
