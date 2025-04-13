@@ -9,6 +9,7 @@
   let forwards = $state([]);
   let defenders = $state([]);
   let midfielders = $state([]);
+  let bankMoney = $state();
   let recommendation = $state({});
   /*   const search = (e) => {
     e.preventDefault();
@@ -86,7 +87,10 @@
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(selectedPlayers),
+        body: JSON.stringify({
+          bank: bankMoney,
+          selectedPlayers: selectedPlayers,
+        }),
       });
       if (!response.ok) {
         throw new Error("Error with getting player data");
@@ -113,6 +117,9 @@
   <!-- <button type="submit">Search</button> -->
 </form>
 
+<input bind:value={bankMoney} placeholder="Money left in bank" />
+
+<!-- replace separate lists with just position checks in for each loop -->
 <div class="flex-container">
   <div>
     <p>Goalkeepers</p>

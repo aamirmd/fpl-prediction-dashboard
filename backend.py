@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from markupsafe import escape
 from flask_cors import CORS
-from players import name_id_players_map, id_stats_players_map, player_basics
 from predict import SimpleModel
 import torch
 import pulp as p
@@ -10,51 +9,9 @@ CORS(app)
 
 #launch flask server with : flask --app backend run
 #launch front end with : npm run dev
-
-stats = ['xP', 'assists','bonus', 'bps',
-'clean_sheets',
- 'creativity',
- 'goals_conceded',
- 'goals_scored',
-'ict_index',
-'influence',
-'minutes',
- 'own_goals',
-'penalties_missed',
-'penalties_saved',
-'red_cards',
-'saves',
-'selected',
-'team_a_score',
-'team_h_score',
- 'threat',
-'total_points',
-'transfers_in',
- 'transfers_out',
- 'value',
-'was_home',
-'yellow_cards']
-
-missing = []
-keys = id_stats_players_map[2].keys()
-for stat in stats:
-    if stat not in keys:
-        missing.append(stat)
-
 model = SimpleModel(26)
 model.load_state_dict(torch.load('./models/baseline.pth'))
 model.eval() 
-playerData = []
-for i in range(len(stats)):
-    if stats[i] in missing:
-        playerData.append(0)
-    else:
-        playerData.append(float(id_stats_players_map[4][stats[i]]))
-playerData = torch.tensor(playerData, dtype=torch.float32)
-with torch.no_grad():  # Disables gradient calculation for inference
-    predictions = model(playerData)
-
-predictions_np = predictions.numpy()
 
 @app.route("/")
 def hello_world():
@@ -62,6 +19,7 @@ def hello_world():
 
 @app.route("/players", methods=["GET"])
 def getPlayers():
+    from players import player_basics
     data = player_basics
     format = {"data": data}
     json = jsonify(format)
@@ -70,6 +28,7 @@ def getPlayers():
 
 @app.route("/search/<name>", methods=["GET"])
 def search(name):
+    from players import name_id_players_map, id_stats_players_map
     clean_name = escape(name)
     id = name_id_players_map[clean_name]
     playerStats = id_stats_players_map[id]
@@ -91,22 +50,47 @@ def search(name):
 def transferRec():
     data = request.get_json()
     for player in data:
-        player["predictPoints"] = predictPoints(player["id"])
-    for player in data:
         print(player)
-    recommendation = getRec(data)
+    recommendation = getRec(data['selectedPlayers'], data['bank'])
     format = {"data": recommendation}
     json = jsonify(format)
     return json
 
-def getRec(players):
+def getRec(players, bank):
     recommendedTransfer = None
-
-    candidates = [player for player in player_basics if player not in players]
-    Lp_prob = p.LpProblem('Problem', p.LpMaximize) 
+    print(players, bank)
     return recommendedTransfer
 
 def predictPoints(id):
+    from players import id_stats_players_map
+    stats = ['xP', 'assists','bonus', 'bps',
+            'clean_sheets',
+            'creativity',
+            'goals_conceded',
+            'goals_scored',
+            'ict_index',
+            'influence',
+            'minutes',
+            'own_goals',
+            'penalties_missed',
+            'penalties_saved',
+            'red_cards',
+            'saves',
+            'selected',
+            'team_a_score',
+            'team_h_score',
+            'threat',
+            'total_points',
+            'transfers_in',
+            'transfers_out',
+            'value',
+            'was_home',
+            'yellow_cards']
+    missing = []
+    keys = id_stats_players_map[2].keys()
+    for stat in stats:
+        if stat not in keys:
+            missing.append(stat)
     playerData = []
     for i in range(len(stats)):
         if stats[i] in missing:

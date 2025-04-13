@@ -36,10 +36,10 @@
       <p>Transfer Recommender</p>
       <TransferSearch {players} />
     </div>
-    <div class="search">
+    <!-- <div class="search">
       <p>Player Search</p>
       <Search {players} />
-    </div>
+    </div> -->
   </div>
 </main>
 

@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 import pickle
 from predict import SimpleModel
+from backend import predictPoints
 import torch
 #import kagglehub
 sys.stdout.reconfigure(encoding='utf-8') # needs utf-8 for fetched data
@@ -41,7 +42,8 @@ for player in retreived_fpl_data["elements"]:
                     "id":player["id"],
                     "position": f'{positions_map[player['element_type']]}',
                     "team":f'{teams_map[player["team"]]}',
-                    "cost": f'{player['now_cost']}'}
+                    "cost": float(player['now_cost']),
+                    "predictedPoints": predictPoints(player["id"])}
         player_basics.append(basicInfo)
 #print(f'players: {player_names}')
 #print(len(player_names))
@@ -85,7 +87,7 @@ stats = ['xP', 'assists','bonus', 'bps',
  'value',
 'was_home',
 'yellow_cards']
-print("[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]")
+ 
 missing = []
 keys = id_stats_players_map[2].keys()
 for stat in stats:
