@@ -9,6 +9,45 @@ CORS(app)
 
 #launch flask server with : flask --app backend run
 #launch front end with : npm run dev
+
+
+
+old_stats = ['xP', 'assists','bonus', 'bps',
+'clean_sheets',
+ 'creativity',
+ 'goals_conceded',
+ 'goals_scored',
+'ict_index',
+'influence',
+'minutes',
+ 'own_goals',
+'penalties_missed',
+'penalties_saved',
+'red_cards',
+'saves',
+'selected',
+'team_a_score',
+'team_h_score',
+ 'threat',
+'total_points',
+'transfers_in',
+ 'transfers_out',
+ 'value',
+'was_home',
+'yellow_cards']
+
+stats = ['assists', 'bonus', 'bps', 'clean_sheets', 'creativity',
+       'goals_conceded', 'goals_scored', 'ict_index', 'influence', 'minutes',
+       'own_goals', 'penalties_missed', 'penalties_saved', 'red_cards',
+       'saves', 'threat', 'total_points', 'transfers_in', 'transfers_out',
+       'yellow_cards']
+
+missing = []
+keys = id_stats_players_map[2].keys()
+for stat in stats:
+    if stat not in keys:
+        missing.append(stat)
+
 model = SimpleModel(26)
 model.load_state_dict(torch.load('./models/baseline.pth'))
 model.eval() 
