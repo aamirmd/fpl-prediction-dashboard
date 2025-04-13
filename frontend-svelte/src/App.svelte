@@ -17,14 +17,14 @@
 </script>
 
 <main>
-  <div>
+  <!-- <div>
     <a href="https://vite.dev" target="_blank" rel="noreferrer">
       <img src={viteLogo} class="logo" alt="Vite Logo" />
     </a>
     <a href="https://svelte.dev" target="_blank" rel="noreferrer">
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a>
-  </div>
+  </div> -->
   <h1>FPL Points Predictor</h1>
   <!-- 
   <div class="card">
@@ -36,10 +36,10 @@
       <p>Transfer Recommender</p>
       <TransferSearch {players} />
     </div>
-    <div class="search">
+    <!-- <div class="search">
       <p>Player Search</p>
       <Search {players} />
-    </div>
+    </div> -->
   </div>
 </main>
 
