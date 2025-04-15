@@ -71,7 +71,8 @@ for playerOut in testTeam:
 
 # sort by delta
 sortedRecs = dict(sorted(recs.items(), key=lambda x: x[1]['delta'], reverse=True)[:3])
-print(sortedRecs)
+sortedRecs = sortedRecs.values()
+print(sortedRecs[0])
 #print(list(sorted(recs.items(), key=lambda x: x[1]['delta'], reverse=True))[:7])
  
 

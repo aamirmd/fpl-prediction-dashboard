@@ -25,13 +25,13 @@
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a>
   </div> -->
-  <h1>FPL Points Predictor</h1>
+  <h1>FPL Transfer Recommender</h1>
   <!-- 
   <div class="card">
     <Counter />
   </div> -->
 
-  <div class="flex-container">
+  <div>
     <div class="transfer">
       <!-- <p>Transfer Recommender</p> -->
       <TransferSearch {players} />

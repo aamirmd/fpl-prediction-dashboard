@@ -135,6 +135,7 @@ def getRec(players, bank):
 
     # sort by delta
     sortedRecs = dict(sorted(recommendedTransfer.items(), key=lambda x: x[1]['delta'], reverse=True)[:3])
+    sortedRecs = list(sortedRecs.values())
     return sortedRecs
 
 def predictPoints(id):
