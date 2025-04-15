@@ -33,7 +33,7 @@
 
   <div class="flex-container">
     <div class="transfer">
-      <p>Transfer Recommender</p>
+      <!-- <p>Transfer Recommender</p> -->
       <TransferSearch {players} />
     </div>
     <!-- <div class="search">
@@ -62,6 +62,7 @@
   .flex-container {
     flex-direction: row;
     display: flex;
+    justify-content: center;
   }
   .transfer {
     justify-items: center;

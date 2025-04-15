@@ -72,14 +72,16 @@
     ) {
       defenders = [...defenders, cPlayer];
     }
-    if (selectedPlayers.length < 15 && !selectedPlayers.includes(cPlayer)) {
-      selectedPlayers = [...selectedPlayers, cPlayer];
-    }
   }
 
   async function getTransferRec() {
     const url = "http://127.0.0.1:5000/transfer";
-
+    selectedPlayers = [
+      ...forwards,
+      ...defenders,
+      ...goalkeepers,
+      ...midfielders,
+    ];
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -97,6 +99,7 @@
       }
       const json = await response.json();
       recommendation = json.data;
+      console.log(recommendation);
     } catch (error) {
       console.error(error.message);
     }
@@ -112,68 +115,92 @@
 </script>
 
 <!-- <form method="post" onsubmit={search} id="searchbar"></form> -->
-<form method="post" id="transferSearch">
-  <input bind:value={searchTransfer} placeholder="Search Player" />
-  <!-- <button type="submit">Search</button> -->
-</form>
 
-<input bind:value={bankMoney} placeholder="Money left in bank" />
+<!-- <input bind:value={bankMoney} placeholder="Money left in bank" /> -->
 
 <!-- replace separate lists with just position checks in for each loop -->
-<div class="flex-container">
+<div class="transferLayout">
   <div>
-    <p>Goalkeepers</p>
-    {#each goalkeepers as gk}
-      <div>{gk["name"]}</div>
-    {/each}
-    <p>Fowards:</p>
-    {#each forwards as fwd}
-      <div>{fwd["name"]}</div>
-    {/each}
-    <p>Midfielders:</p>
-    {#each midfielders as mid}
-      <div>{mid["name"]}</div>
-    {/each}
-    <p>Defenders:</p>
-    {#each defenders as def}
-      <div>{def["name"]}</div>
-    {/each}
+    <div>
+      <button onclick={() => reset()}>Reset Squad</button>
+    </div>
+    <div>
+      <p>Goalkeepers: {goalkeepers.length}/2</p>
+      <div class="playerRow">
+        {#each goalkeepers as gk}
+          <div class="player">{gk["name"]}</div>
+        {/each}
+      </div>
+
+      <p>Defenders: {defenders.length}/5</p>
+      <div class="playerRow">
+        {#each defenders as def}
+          <div class="player">{def["name"]}</div>
+        {/each}
+      </div>
+
+      <p>Midfielders: {midfielders.length}/5</p>
+      <div class="playerRow">
+        {#each midfielders as mid}
+          <div class="player">{mid["name"]}</div>
+        {/each}
+      </div>
+
+      <p>Fowards: {forwards.length}/3</p>
+      <div class="playerRow">
+        {#each forwards as fwd}
+          <div class="player">{fwd["name"]}</div>
+        {/each}
+      </div>
+    </div>
   </div>
-  {#if searchTransfer === ""}
-    <p></p>
-  {:else}
-    <div class="suggestionView">
-      {#each filteredPlayers as player}
-        <div>
-          <button onclick={() => chosenPlayer(player)} class="suggestion"
-            >{player["name"]}</button
-          >
+
+  <div class="searchLayout">
+    <div>
+      <form method="post" class="transferSearch">
+        <input bind:value={searchTransfer} placeholder="Search Player" />
+        <!-- <button type="submit">Search</button> -->
+      </form>
+    </div>
+
+    <div>
+      {#if searchTransfer === ""}
+        <p></p>
+      {:else}
+        <div class="suggestionView">
+          {#each filteredPlayers as player}
+            <div>
+              <button onclick={() => chosenPlayer(player)} class="suggestion"
+                >{player["name"]}</button
+              >
+            </div>
+          {/each}
         </div>
-      {/each}
+      {/if}
     </div>
-    <p>testing</p>
-  {/if}
-  <div>
-    <button onclick={() => reset()}>Reset</button>
-    <div style="justify-items: center;">{selectedPlayers.length}/15</div>
-    <div class="selectedView">
-      {#each selectedPlayers as player}
-        <p>{player["name"]}</p>
-      {/each}
-    </div>
+  </div>
+
+  <div class="bankRow">
+    <input
+      class="bank"
+      bind:value={bankMoney}
+      placeholder="Money left in bank"
+    />
   </div>
 </div>
-<div>
+
+<!-- <div>
   <button onclick={() => getTransferRec()}>Get transfer rec</button>
   <p>Recommendation</p>
   <p>{recommendation}</p>
-</div>
+</div> -->
 
 <style>
   .suggestionView {
     overflow-y: auto;
     max-height: 20em;
     z-index: 10;
+    max-width: 300px;
   }
   .flex-container {
     flex-direction: row;
@@ -182,5 +209,42 @@
   .selectedView {
     overflow-y: auto;
     max-height: 20em;
+  }
+  .transferLayout {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+  }
+  .transferSearch input {
+    border-radius: 5px;
+    height: 30px;
+    width: 300px;
+    outline: none;
+    /* transition: border-color 0.2s; */
+    text-align: center;
+  }
+  .playerRow {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 500px;
+    justify-content: center;
+  }
+  .player {
+    padding: 5px;
+    font-size: 15px;
+  }
+  .bank {
+    border-radius: 5px;
+    height: 30px;
+    width: 150px;
+    outline: none;
+    /* transition: border-color 0.2s; */
+    text-align: center;
+  }
+  .bankRow {
+    flex-direction: row;
+    display: flex;
+    align-content: center;
   }
 </style>

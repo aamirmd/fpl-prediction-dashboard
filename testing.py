@@ -1,4 +1,4 @@
-from players import  player_basics
+from players import  player_basics, name_id_players_map, id_stats_players_map
 import random
 
 # for each player in team, simulate them being swapped out, get 3 highest pred points for each of them, then sort, then get highest three
@@ -7,17 +7,24 @@ import random
 # same position : fwd for fwd, def for def, etc
 # no more than 3 players from same team : CHECK WITH playerteams dict
 # cost : player rec cost <= bank + player out
-random.seed(0)
+ 
 testTeam = []
 # format : player in : player out
 recs = {}
 candidates = {}
-for i in range(15):
+for i in range(13):
     index = random.randint(0, len(player_basics))
     testTeam.append(player_basics[index])
 
+test1 = name_id_players_map['Mohamed Salah'.lower()]
+test2 = name_id_players_map['Alexander Isak'.lower()]
+test3 = name_id_players_map['Omar Marmoush'.lower()]
+
+for p in player_basics:
+    if p['id'] == test1 or p['id'] == test2 or p['id'] == test3:
+        testTeam.append(p)
  
-bank = 100
+bank = 50
 
 # for each player in selected team
 
@@ -65,6 +72,7 @@ for playerOut in testTeam:
 # sort by delta
 sortedRecs = dict(sorted(recs.items(), key=lambda x: x[1]['delta'], reverse=True)[:3])
 print(sortedRecs)
+#print(list(sorted(recs.items(), key=lambda x: x[1]['delta'], reverse=True))[:7])
  
 
 
