@@ -39,17 +39,11 @@ old_stats = ['xP', 'assists','bonus', 'bps',
 stats = ['assists', 'bonus', 'bps', 'clean_sheets', 'creativity',
        'goals_conceded', 'goals_scored', 'ict_index', 'influence', 'minutes',
        'own_goals', 'penalties_missed', 'penalties_saved', 'red_cards',
-       'saves', 'threat', 'total_points', 'transfers_in', 'transfers_out',
+       'saves', 'threat', 'total_points', 'transfers_in_event', 'transfers_out_event',
        'yellow_cards']
 
-missing = []
-keys = id_stats_players_map[2].keys()
-for stat in stats:
-    if stat not in keys:
-        missing.append(stat)
-
-model = SimpleModel(26)
-model.load_state_dict(torch.load('./models/baseline.pth'))
+model = SimpleModel(20)
+model.load_state_dict(torch.load('./models/residual-1.pth'))
 model.eval() 
 
 @app.route("/")
@@ -88,16 +82,16 @@ def search(name):
 @app.route("/transfer", methods=["POST"])
 def transferRec():
     data = request.get_json()
-    for player in data:
-        print(player)
+    
     recommendation = getRec(data['selectedPlayers'], data['bank'])
     format = {"data": recommendation}
     json = jsonify(format)
     return json
 
 def getRec(players, bank):
+    from players import player_basics
     recommendedTransfer = {}
-    
+    bank = float(bank)
     for playerOut in players:
     # choose 3 , no repeats, so remove candidate from pool
         candidates = [player for player in player_basics if player not in players and player['position'] == playerOut['position']]
@@ -112,7 +106,7 @@ def getRec(players, bank):
                 playerTeams[team] = 1
             else:
                 playerTeams[team] += 1
-                
+
         playerTeams[playerOutTeam] -= 1
         # get all possible candidates, make optimal selection later
         for candidate in candidates:
@@ -141,47 +135,24 @@ def getRec(players, bank):
 
     # sort by delta
     sortedRecs = dict(sorted(recommendedTransfer.items(), key=lambda x: x[1]['delta'], reverse=True)[:3])
+    sortedRecs = list(sortedRecs.values())
     return sortedRecs
 
 def predictPoints(id):
-    from players import id_stats_players_map
-    stats = ['xP', 'assists','bonus', 'bps',
-            'clean_sheets',
-            'creativity',
-            'goals_conceded',
-            'goals_scored',
-            'ict_index',
-            'influence',
-            'minutes',
-            'own_goals',
-            'penalties_missed',
-            'penalties_saved',
-            'red_cards',
-            'saves',
-            'selected',
-            'team_a_score',
-            'team_h_score',
-            'threat',
-            'total_points',
-            'transfers_in',
-            'transfers_out',
-            'value',
-            'was_home',
-            'yellow_cards']
-    missing = []
-    keys = id_stats_players_map[2].keys()
-    for stat in stats:
-        if stat not in keys:
-            missing.append(stat)
+    from players import gwStats_map, id_stats_players_map
+    # use global stats list
     playerData = []
-    for i in range(len(stats)):
-        if stats[i] in missing:
-            playerData.append(0)
-        else:
-            playerData.append(float(id_stats_players_map[id][stats[i]]))
-    playerData = torch.tensor(playerData, dtype=torch.float32)
-    with torch.no_grad():  # Disables gradient calculation for inference
-        predictions = model(playerData)
-
-    predictions_np = str(predictions.numpy()[0])
-    return predictions_np
+    if (id in gwStats_map):
+        playerGWStats = gwStats_map[int(id)]
+        for i in range(len(stats)):
+            if stats[i] in playerGWStats:
+                playerData.append(float(playerGWStats[stats[i]]))
+            else:
+                playerData.append(id_stats_players_map[id][stats[i]])
+        playerData = torch.tensor(playerData, dtype=torch.float32)
+        with torch.no_grad():  # Disables gradient calculation for inference
+            predictions = model(playerData)
+        predictions_np = str(predictions.numpy()[0])
+        return predictions_np
+    else:
+        return -1

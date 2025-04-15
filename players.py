@@ -24,8 +24,29 @@ def fpl_api():
             return data
     except:
         return None
+    
+def gameWeekStats(week):
+    url = f'https://fantasy.premierleague.com/api/event/{week}/live/'
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()['elements']
+            return data
+    except:
+        return None
 
-retreived_fpl_data = fpl_api()   
+retreived_fpl_data = fpl_api()
+events = retreived_fpl_data['events']
+week = 0
+for i in range(len(events) - 1, 0, -1):
+    if events[i]['finished'] == True:
+        week = events[i]['id']
+        break
+gwStats = gameWeekStats(week=week)
+gwStats_map = {player['id'] : player["stats"] for player in gwStats}
+ 
+
+
 """ for key, value in retreived_fpl_data.items():
     print(key) """
 
@@ -35,6 +56,7 @@ teams_map = {team["id"]: team["name"] for team in retreived_fpl_data["teams"]}
 #lowered all the names
 name_id_players_map = {f'{player["first_name"]} {player["second_name"]}'.lower(): player["id"] for player in retreived_fpl_data["elements"]}
 id_stats_players_map = {player["id"] : player for player in retreived_fpl_data["elements"]}
+
 player_basics = []#{'name':f'{player["first_name"]} {player["second_name"]}', f'' for player in retreived_fpl_data["elements"]}
 for player in retreived_fpl_data["elements"]:
     if (positions_map[player['element_type']] != 'Manager'):
@@ -88,11 +110,11 @@ stats = ['xP', 'assists','bonus', 'bps',
 'was_home',
 'yellow_cards']
  
-missing = []
+""" missing = []
 keys = id_stats_players_map[2].keys()
 for stat in stats:
     if stat not in keys:
-        missing.append(stat)
+        missing.append(stat) """
  
 """ model = SimpleModel(26)
 model.load_state_dict(torch.load('./models/baseline.pth'))
