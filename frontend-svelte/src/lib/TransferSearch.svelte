@@ -10,6 +10,7 @@
   let defenders = $state([]);
   let midfielders = $state([]);
   let bankMoney = $state();
+  let teams = $state({});
   let recommendation = $state([]);
 
   let startgoalkeepers = $state([]);
@@ -17,7 +18,31 @@
   let startdefenders = $state([]);
   let startmidfielders = $state([]);
 
+  let positionFilter = $state("");
   let afterTransfer = $state([]);
+
+  let premier_league_team_styles = {
+    "Arsenal": { "color": "#EF4135", "font": "#FFFFFF" },
+    "Aston Villa": { "color": "#7A2A3C", "font": "#FFFFFF" },
+    "Bournemouth": { "color": "#9E1B32", "font": "#FFFFFF" },
+    "Brentford": { "color": "#E30613", "font": "#FFFFFF" },
+    "Brighton": { "color": "#005D6A", "font": "#FFFFFF" },
+    "Chelsea": { "color": "#034694", "font": "#FFFFFF" },
+    "Crystal Palace": { "color": "#1C4587", "font": "#FFFFFF" },
+    "Everton": { "color": "#003B5C", "font": "#FFFFFF" },
+    "Fulham": { "color": "#FFFFFF", "font": "#000000" },
+    "Liverpool": { "color": "#C8102E", "font": "#FFFFFF" },
+    "Man City": { "color": "#6CABDD", "font": "#000000" },
+    "Man Utd": { "color": "#DA291C", "font": "#FFFFFF" },
+    "Newcastle": { "color": "#1A1C1D", "font": "#FFFFFF" },
+    "Nott'm Forest": { "color": "#C8102E", "font": "#FFFFFF" },
+    "Spurs": { "color": "#003B5C", "font": "#FFFFFF" },
+    "West Ham": { "color": "#7A2A3C", "font": "#FFFFFF" },
+    "Wolves": { "color": "#FDB913", "font": "#000000" },
+    "Ipswich": { "color": "#003B5C", "font": "#FFFFFF" },
+    "Southampton": { "color": "#D71920", "font": "#FFFFFF" },
+    "Leicester": { "color": "#003090", "font": "#FFFFFF" },
+  };
   /*   const search = (e) => {
     e.preventDefault();
     playerName = document.forms["searchbar"].elements[0].value;
@@ -39,21 +64,33 @@
   }
  */
   let filteredPlayers = $derived(
-    players.filter((player) =>
-      player["name"]
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toLowerCase()
-        .includes(
-          searchTransfer
-            .normalize("NFD")
-            .replace(/\p{Diacritic}/gu, "")
-            .toLocaleLowerCase()
-        )
-    )
+    players.filter(
+      (player) =>
+        player["name"]
+          .normalize("NFD")
+          .replace(/\p{Diacritic}/gu, "")
+          .toLowerCase()
+          .includes(
+            searchTransfer
+              .normalize("NFD")
+              .replace(/\p{Diacritic}/gu, "")
+              .toLocaleLowerCase(),
+          ) &&
+        (player["position"] == positionFilter || positionFilter == ""),
+    ),
   );
 
   function chosenPlayer(cPlayer) {
+    let cPlayerTeam = cPlayer["team"];
+    if (teams[cPlayerTeam] >= 3) {
+      return;
+    } else {
+      if (cPlayerTeam in teams) {
+        teams[cPlayerTeam] += 1;
+      } else {
+        teams[cPlayerTeam] = 1;
+      }
+    }
     if (
       cPlayer["position"] === "Forward" &&
       !forwards.includes(cPlayer) &&
@@ -118,6 +155,7 @@
     forwards = [];
     midfielders = [];
     defenders = [];
+    teams = {};
   }
 
   function removePlayer(player) {
@@ -130,6 +168,8 @@
     } else if (player["position"] === "Goalkeeper") {
       goalkeepers = goalkeepers.filter((p) => p["name"] !== player["name"]);
     }
+    let pTeam = player["team"];
+    teams[pTeam] -= 1;
   }
 
   function applyTransfer(rec) {
@@ -142,7 +182,7 @@
 
     afterTransfer = afterTransfer.sort(
       (x, y) =>
-        parseFloat(y["predictedPoints"]) - parseFloat(x["predictedPoints"])
+        parseFloat(y["predictedPoints"]) - parseFloat(x["predictedPoints"]),
     );
 
     let total = 0;
@@ -182,6 +222,10 @@
       }
     }
   }
+
+  function chosenPosition(filter) {
+    positionFilter = filter;
+  }
 </script>
 
 <!-- <form method="post" onsubmit={search} id="searchbar"></form> -->
@@ -198,7 +242,12 @@
       <p>Goalkeepers: {goalkeepers.length}/2</p>
       <div class="playerRow">
         {#each goalkeepers as gk}
-          <div class="player">
+          <div
+            class="player"
+            style="background-color: {premier_league_team_styles[gk['team']][
+              'color'
+            ]}; color:{premier_league_team_styles[gk['team']]['font']}"
+          >
             {gk["name"]}
             <button class="x" onclick={() => removePlayer(gk)}>x</button>
           </div>
@@ -208,7 +257,12 @@
       <p>Defenders: {defenders.length}/5</p>
       <div class="playerRow">
         {#each defenders as def}
-          <div class="player">
+          <div
+            class="player"
+            style="background-color: {premier_league_team_styles[def['team']][
+              'color'
+            ]}; color:{premier_league_team_styles[def['team']]['font']}"
+          >
             {def["name"]}
             <button class="x" onclick={() => removePlayer(def)}>x</button>
           </div>
@@ -218,7 +272,12 @@
       <p>Midfielders: {midfielders.length}/5</p>
       <div class="playerRow">
         {#each midfielders as mid}
-          <div class="player">
+          <div
+            class="player"
+            style="background-color: {premier_league_team_styles[mid['team']][
+              'color'
+            ]}; color:{premier_league_team_styles[mid['team']]['font']}"
+          >
             {mid["name"]}
             <button class="x" onclick={() => removePlayer(mid)}>x</button>
           </div>
@@ -228,7 +287,12 @@
       <p>Forwards: {forwards.length}/3</p>
       <div class="playerRow">
         {#each forwards as fwd}
-          <div class="player">
+          <div
+            class="player"
+            style="background-color: {premier_league_team_styles[fwd['team']][
+              'color'
+            ]}; color:{premier_league_team_styles[fwd['team']]['font']}"
+          >
             {fwd["name"]}
             <button class="x" onclick={() => removePlayer(fwd)}>x</button>
           </div>
@@ -238,11 +302,52 @@
   </div>
 
   <div class="searchLayout">
+    Position Filters
+    <div class="posFilter">
+      <button
+        onclick={() => chosenPosition("")}
+        class="posFilterButton"
+        style={`background-color: ${
+          positionFilter === "" ? "green" : "darkgray"
+        }`}>Any</button
+      >
+      <button
+        onclick={() => chosenPosition("Goalkeeper")}
+        class="posFilterButton"
+        style={`background-color: ${
+          positionFilter === "Goalkeeper" ? "green" : "darkgray"
+        }`}>GK</button
+      >
+      <button
+        onclick={() => chosenPosition("Defender")}
+        class="posFilterButton"
+        style={`background-color: ${positionFilter === "Defender" ? "green" : "darkgray"}`}
+        >DEF</button
+      >
+      <button
+        onclick={() => chosenPosition("Midfielder")}
+        class="posFilterButton"
+        style={`background-color: ${
+          positionFilter === "Midfielder" ? "green" : "darkgray"
+        }`}>MID</button
+      >
+      <button
+        onclick={() => chosenPosition("Forward")}
+        class="posFilterButton"
+        style={`background-color: ${
+          positionFilter === "Forward" ? "green" : "darkgray"
+        }`}>FWD</button
+      >
+    </div>
     <div class="searchContainer">
-      <form method="post" class="transferSearch">
-        <input bind:value={searchTransfer} placeholder="Search Player" />
-      </form>
-
+      <div class="searchRow">
+        <form method="post" class="transferSearch">
+          <input bind:value={searchTransfer} placeholder="Search Player" />
+        </form>
+        <button onclick={() => (searchTransfer = "")} class="clearButton"
+          >Clear</button
+        >
+      </div>
       {#if searchTransfer !== ""}
         <div class="suggestionView">
           {#each filteredPlayers as player}
@@ -262,7 +367,12 @@
         <p>Goalkeepers</p>
         <div class="playerRow">
           {#each startgoalkeepers as gk}
-            <div class="player">
+            <div
+              class="player"
+              style="background-color: {premier_league_team_styles[gk['team']][
+                'color'
+              ]}; color:{premier_league_team_styles[gk['team']]['font']}"
+            >
               {gk["name"]}
             </div>
           {/each}
@@ -271,7 +381,12 @@
         <p>Defenders</p>
         <div class="playerRow">
           {#each startdefenders as def}
-            <div class="player">
+            <div
+              class="player"
+              style="background-color: {premier_league_team_styles[def['team']][
+                'color'
+              ]}; color:{premier_league_team_styles[def['team']]['font']}"
+            >
               {def["name"]}
             </div>
           {/each}
@@ -280,7 +395,12 @@
         <p>Midfielders</p>
         <div class="playerRow">
           {#each startmidfielders as mid}
-            <div class="player">
+            <div
+              class="player"
+              style="background-color: {premier_league_team_styles[mid['team']][
+                'color'
+              ]}; color:{premier_league_team_styles[mid['team']]['font']}"
+            >
               {mid["name"]}
             </div>
           {/each}
@@ -289,7 +409,12 @@
         <p>Forwards:</p>
         <div class="playerRow">
           {#each startforwards as fwd}
-            <div class="player">
+            <div
+              class="player"
+              style="background-color: {premier_league_team_styles[fwd['team']][
+                'color'
+              ]}; color:{premier_league_team_styles[fwd['team']]['font']}"
+            >
               {fwd["name"]}
             </div>
           {/each}
@@ -479,5 +604,22 @@
     width: 20%;
     padding: 3px;
     margin-left: auto;
+  }
+  .posFilter {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .posFilterButton {
+    border-radius: 0.5;
+  }
+  .searchRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .clearButton {
+    font-size: 12px;
   }
 </style>
