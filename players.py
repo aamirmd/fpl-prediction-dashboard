@@ -57,7 +57,7 @@ teams_map = {team["id"]: team["name"] for team in retreived_fpl_data["teams"]}
 name_id_players_map = {f'{player["first_name"]} {player["second_name"]}'.lower(): player["id"] for player in retreived_fpl_data["elements"]}
 id_stats_players_map = {player["id"] : player for player in retreived_fpl_data["elements"]}
 print(teams_map)
-player_basics = []#{'name':f'{player["first_name"]} {player["second_name"]}', f'' for player in retreived_fpl_data["elements"]}
+player_basics = [] 
 for player in retreived_fpl_data["elements"]:
     if (positions_map[player['element_type']] != 'Manager'):
         basicInfo = {"name": f'{player["first_name"]} {player["second_name"]}',
@@ -67,8 +67,7 @@ for player in retreived_fpl_data["elements"]:
                     "cost": float(player['now_cost']),
                     "predictedPoints": predictPoints(player["id"])}
         player_basics.append(basicInfo)
-#print(f'players: {player_names}')
-#print(len(player_names))
+ 
 # Storing hashmaps as pickle files
 with open('data/positions_map.pkl', 'wb') as f:
     pickle.dump(positions_map, f)
