@@ -46,7 +46,7 @@ class SimpleModel(nn.Module):
         x = self.input_layer(x)
         x = self.blocks(x)
         return self.output_layer(x)
-numFeatures = 20
+numFeatures = 21
 # To load the model
 """ model = SimpleModel(numFeatures)
 model.load_state_dict(torch.load('./models/baseline.pth'))
