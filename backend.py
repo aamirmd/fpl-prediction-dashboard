@@ -42,8 +42,13 @@ stats = ['assists', 'bonus', 'bps', 'clean_sheets', 'creativity',
        'saves', 'threat', 'total_points', 'transfers_in_event', 'transfers_out_event',
        'yellow_cards']
 
-model = SimpleModel(20)
-model.load_state_dict(torch.load('./models/residual-1.pth'))
+""" ['assists', 'bonus', 'bps', 'clean_sheets', 'creativity',
+       'goals_conceded', 'goals_scored', 'ict_index', 'influence', 'minutes',
+       'own_goals', 'penalties_missed', 'penalties_saved', 'red_cards',
+       'saves', 'threat', 'total_points', 'transfers_in', 'transfers_out',
+       'yellow_cards', 'is_home'] """
+model = SimpleModel(21)
+model.load_state_dict(torch.load('./models/residual-2.pth'))
 model.eval() 
 
 @app.route("/")
@@ -53,6 +58,7 @@ def hello_world():
 @app.route("/players", methods=["GET"])
 def getPlayers():
     from players import player_basics
+
     data = player_basics
     format = {"data": data}
     json = jsonify(format)
@@ -139,7 +145,7 @@ def getRec(players, bank):
     return sortedRecs
 
 def predictPoints(id):
-    from players import gwStats_map, id_stats_players_map
+    from players import gwStats_map, id_stats_players_map, id_ishome_nextgame
     # use global stats list
     playerData = []
     if (id in gwStats_map):
@@ -148,7 +154,12 @@ def predictPoints(id):
             if stats[i] in playerGWStats:
                 playerData.append(float(playerGWStats[stats[i]]))
             else:
-                playerData.append(id_stats_players_map[id][stats[i]])
+                playerData.append(float(id_stats_players_map[id][stats[i]]))
+        # add is home as last element in the list
+        if id_stats_players_map[id]['team'] in id_ishome_nextgame:
+            playerData.append(float(id_stats_players_map[id]['team']))
+        else:
+            playerData.append(float(-1))
         playerData = torch.tensor(playerData, dtype=torch.float32)
         with torch.no_grad():  # Disables gradient calculation for inference
             predictions = model(playerData)

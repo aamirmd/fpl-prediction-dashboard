@@ -34,7 +34,17 @@ def gameWeekStats(week):
             return data
     except:
         return None
-
+    
+def isHome():
+    url = f'https://fantasy.premierleague.com/api/fixtures/'
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+        
+            return data
+    except:
+        return None
 retreived_fpl_data = fpl_api()
 events = retreived_fpl_data['events']
 week = 0
@@ -45,7 +55,7 @@ for i in range(len(events) - 1, 0, -1):
 gwStats = gameWeekStats(week=week)
 gwStats_map = {player['id'] : player["stats"] for player in gwStats}
  
-
+#print(isHome(1)['is_home'] == True)
 
 """ for key, value in retreived_fpl_data.items():
     print(key) """
@@ -56,7 +66,17 @@ teams_map = {team["id"]: team["name"] for team in retreived_fpl_data["teams"]}
 #lowered all the names
 name_id_players_map = {f'{player["first_name"]} {player["second_name"]}'.lower(): player["id"] for player in retreived_fpl_data["elements"]}
 id_stats_players_map = {player["id"] : player for player in retreived_fpl_data["elements"]}
-print(teams_map)
+id_ishome_nextgame = {}
+fixtures = isHome()
+for fixture in fixtures:
+    if fixture['finished'] == False:
+        if fixture['event'] == week + 1:
+            id_ishome_nextgame[fixture['team_h']] = 1
+            id_ishome_nextgame[fixture['team_a']] = 0
+        elif fixture['event'] == week + 2:
+            id_ishome_nextgame[fixture['team_h']] = 1
+            id_ishome_nextgame[fixture['team_a']] = 0
+         
 player_basics = [] 
 for player in retreived_fpl_data["elements"]:
     if (positions_map[player['element_type']] != 'Manager'):
