@@ -5,6 +5,17 @@ Fantasy Premier League (FPL) is a massive online fantasy football game with mill
 
 This project introduces the FPL Transfer Recommender, an intuitive and user-friendly web application designed to assist casual FPL players in making optimal transfer decisions. Our goal is to simplify the complex process of squad management, allowing users to remain engaged with the league without being bogged down by extensive data analysis or performance reports.
 
+## Getting Started
+To launch and run the FPL Transfer Recommender, you will need to:
+
+1. Open two terminals: These can be in VSCode, cmd, or your operating system's equivalent.
+2. Install project dependencies: In one terminal, navigate to the main project folder and run npm install to install project dependencies.
+3. Run the Flask backend: In the same terminal, execute flask --app backend run to run the Python Flask backend.
+4. Start the Svelte frontend: In the second terminal, cd into the folder called frontend-svelte, and run npm run dev. This will start the frontend server and display the port it's running on; click the displayed link to open the web application.
+5. Use the web app: You can now use the web app to enter a squad of players and get transfer recommendations.
+
+**Note**: Paths may need to be configured depending on your environment for both the ML part and the website.
+
 ## Data source
 
 Data source: https://github.com/vaastav/Fantasy-Premier-League/tree/master
@@ -28,17 +39,6 @@ The FPL Transfer Recommender provides a streamlined experience for FPL managers:
 - Suggested Starting 11: After applying a recommended transfer, the application suggests an ideal 11-player lineup for the upcoming gameweek based on predicted points.
 - User-Friendly Interface: Designed with a simple and clean UI, making it accessible for beginners and casual fans who may find other FPL data dashboards intimidating.
 - Free Service: All web application services are completely free, unlike some existing tools that require payment for advanced features.
-
-## Getting Started
-To launch and run the FPL Transfer Recommender, you will need to:
-
-1. Open two terminals: These can be in VSCode, cmd, or your operating system's equivalent.
-2. Install project dependencies: In one terminal, navigate to the main project folder and run npm install to install project dependencies.
-3. Run the Flask backend: In the same terminal, execute flask --app backend run to run the Python Flask backend.
-4. Start the Svelte frontend: In the second terminal, cd into the folder called frontend-svelte, and run npm run dev. This will start the frontend server and display the port it's running on; click the displayed link to open the web application.
-5. Use the web app: You can now use the web app to enter a squad of players and get transfer recommendations.
-
-**Note**: Paths may need to be configured depending on your environment for both the ML part and the website.
 
 ## How it Works
 The FPL Transfer Recommender operates on a robust backend system that leverages machine learning and a sophisticated recommendation algorithm:
@@ -67,3 +67,7 @@ Throughout the development of this project, we encountered several challenges:
 - Advanced Transfer Algorithm: Incorporate more nuanced FPL statistics and user preferences (e.g., best points/cost player, position-specific recommendations) into the recommendation algorithm.
 - Improved UI/UX: Enhance the visual design to align more closely with the official FPL color scheme (purple and white) and potentially include direct links to the official FPL website for supplementary material.
 - Continuous Model Improvement: Further fine-tune the ML model to achieve even lower error rates in point predictions
+
+## Acknowledgements
+
+We thank the teaching staff of CS 4365/6365 (Spring 2025) for giving us the opportunity to work on this project and supporting us along the way.
