@@ -35,7 +35,7 @@ The FPL Transfer Recommender operates on a robust backend system that leverages 
 
 Data source: https://github.com/vaastav/Fantasy-Premier-League/tree/master
 
-This github repository contains historical data obtained from the official API mentioned above.
+This github repository contains historical data obtained from the official API mentioned in the previous section. This was used for model training.
 
 Bibtex reference of data source:
 ```
@@ -48,7 +48,7 @@ Bibtex reference of data source:
 ```
 
 ## Project Structure
-- `backend.py`: Contains the Flask backend code, including the ML model and recommendation algorithm.
+- `backend.py`: Contains the Flask backend code, including the ML model inference and recommendation algorithm.
 - `frontend-svelte/`: Houses the Svelte frontend application.
 - `data/`: Contains historical FPL data from the official FPL API.
 - `models/`: Contains trained ML models
@@ -59,15 +59,14 @@ Throughout the development of this project, we encountered several challenges:
 
 - ML Model Stability: Initial attempts with a baseline neural network model resulted in unstable training, necessitating the development of a more robust model.
 - Data Inconsistencies: Discrepancies between historical data from the GitHub repository used for training and live data from the official FPL API presented challenges in feature utilization.
-- Nuanced FPL Constraints: Implementing complex FPL rules and player statistics (e.g., injury reports, player form) into the recommendation algorithm proved difficult.
-- Algorithm Validation: Accurately gauging whether the algorithm consistently provides the "absolute best" transfers is challenging due to the nuanced nature of FPL strategy and user preference.
+- Optimal Change Algorithm Validation: Accurately gauging whether the algorithm consistently provides the "absolute best" transfers is challenging due to the nuanced nature of FPL strategy and user preference.
 - UI/UX Design: Ensuring a visually appealing and intuitive user interface required significant trial and error with HTML/CSS to prevent unpredictable component shifting and maintain consistent spacing.
 
 ## Future Enhancements
 - Advanced Transfer Algorithm: Incorporate more nuanced FPL statistics and user preferences (e.g., best points/cost player, position-specific recommendations) into the recommendation algorithm.
 - Improved UI/UX: Enhance the visual design to align more closely with the official FPL color scheme (purple and white) and potentially include direct links to the official FPL website for supplementary material.
-- Continuous Model Improvement: Further fine-tune the ML model to achieve even lower error rates in point predictions
+- Continuous Model Improvement: Further fine-tune the ML model to achieve even lower error rates in point predictions.
 
 ## Acknowledgements
 
-We thank the teaching staff of CS 4365/6365 (Spring 2025) for giving us the opportunity to work on this project and supporting us along the way.
+We thank the teaching staff of CS 4365/6365 (Spring 2025) at Georgia Tech for giving us the opportunity to work on this project and supporting us along the way.
