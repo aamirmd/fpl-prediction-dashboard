@@ -1,5 +1,7 @@
 # FPL Prediction Dashboard
 
+![dashboard-preview](frontend-svelte/fpl-thumbnail.jpg)
+
 Fantasy Premier League (FPL) is a massive online fantasy football game with millions of players globally. Despite its popularity, a significant number of teams become "inactive" towards the end of each season, meaning no transfers were made in 5 or more gameweeks. Around 63.1% of teams were deemed inactive by the end of the 2019-2020 season. Many users abandon their squads due to the overwhelming nature of keeping up with matches, analyzing player statistics, and understanding the intricate nuances of football.
 
 
